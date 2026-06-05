@@ -115,10 +115,11 @@ public class MainActivity extends AppCompatActivity {
         s.setLoadWithOverviewMode(true);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        s.setJavaScriptCanOpenWindowsAutomatically(true);
 
-        // Tablet User-Agent to bypass mobile-only shuffle/skip restrictions while keeping a touch-friendly layout
+        // Updated User-Agent: Modern Chrome on Android Tablet to bypass shuffle while maintaining compatibility
         s.setUserAgentString(
-            "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+            "Mozilla/5.0 (Linux; Android 13; Pixel Tablet) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         );
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
