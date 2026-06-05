@@ -103,11 +103,10 @@ public class MainActivity extends AppCompatActivity {
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
         s.setOffscreenPreRaster(true);
         
-        // Disable unnecessary features for speed
-        s.setGeolocationEnabled(false);
-        s.setAllowFileAccess(false);
-        s.setSupportZoom(false);
-        s.setBuiltInZoomControls(false);
+        // Enable zoom for user flexibility
+        s.setSupportZoom(true);
+        s.setBuiltInZoomControls(true);
+        s.setDisplayZoomControls(false); // Hide the ugly zoom buttons but keep pinch-to-zoom
         s.setSaveFormData(false);
         
         // ── Media & Display ──────────────────────────────────────
@@ -160,7 +159,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                // Temporary removal of adblocker to test "Unavailable Browser" fix
+                String url = request.getUrl().toString();
+                // Safe but effective adblocking for the official release
+                if (url.contains("googleads") || url.contains("doubleclick") || 
+                    url.contains("adservice") || url.contains("vizury") || 
+                    url.contains("quantserve") || url.contains("facebook.net")) {
+                    return new WebResourceResponse("text/plain", "utf-8", null);
+                }
                 return super.shouldInterceptRequest(view, request);
             }
 
