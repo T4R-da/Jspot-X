@@ -120,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
         s.setAllowFileAccess(true);
         s.setDatabaseEnabled(true);
 
-        // Desktop User-Agent to bypass all mobile restrictions (shuffle/skip locks)
-        // Using a modern Windows Chrome UA for maximum compatibility with Spotify's player engine
+        // High-end Tablet User-Agent: Triggers the "Android Tablet" UI which has bottom navigation 
+        // AND usually allows on-demand playback (no forced shuffle/skip lock).
         s.setUserAgentString(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 13; SM-X906B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
         );
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
@@ -156,11 +156,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
-                // Less aggressive adblocking to ensure critical player scripts are not blocked
+                // Core adblocking while avoiding critical Spotify playback scripts
                 if (url.contains("googleads") || url.contains("doubleclick") || 
-                    url.contains("adservice") || url.contains("analytics.google") ||
-                    url.contains("vizury") || url.contains("quantserve") ||
-                    url.contains("facebook.net") || url.contains("ads-twitter.com")) {
+                    url.contains("adservice") || url.contains("vizury") || 
+                    url.contains("quantserve") || url.contains("facebook.net") || 
+                    url.contains("ads-twitter.com")) {
                     return new WebResourceResponse("text/plain", "utf-8", null);
                 }
                 return super.shouldInterceptRequest(view, request);
@@ -226,16 +226,22 @@ public class MainActivity extends AppCompatActivity {
             "  if (window.__spoticapInjected) return;" +
             "  window.__spoticapInjected = true;" +
             
+            // Masking the WebView to prevent "Unsupported Browser" errors
+            "  Object.defineProperty(navigator, 'webdriver', { get: () => undefined });" +
+            "  if (navigator.languages.length === 0) {" +
+            "    Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });" +
+            "  }" +
+
             "  var style = document.createElement('style');" +
             "  style.innerHTML = 'body { background: #000 !important; } " +
             "    [data-testid=\"ad-visible-container\"], [aria-label=\"Upgrade to Premium\"], " +
             "    .view-port-section-ads, .main-view-container-ads, " +
             "    [data-testid=\"upsell-banner\"], #fl-v-bottom-ads, " +
-            "    [data-testid=\"now-playing-bar\"], .Root__now-playing-bar, " +
             "    [aria-label=\"Premium\"], a[href*=\"/premium/\"], " +
             "    nav li:has(a[href*=\"premium\"]), nav li:has(a[href*=\"upgrade\"]), " +
             "    div:has(> a[href*=\"premium\"]), " +
-            "    .Root__nav-bar, [data-testid=\"side-navigation-bar\"] { display: none !important; }';" +
+            "    .Root__nav-bar, [data-testid=\"side-navigation-bar\"] { display: none !important; } " +
+            "    [data-testid=\"now-playing-bar\"], .Root__now-playing-bar { display: flex !important; }';" +
             "  document.head.appendChild(style);" +
 
             // Optimization: Use state-diffing for high responsiveness with low CPU
