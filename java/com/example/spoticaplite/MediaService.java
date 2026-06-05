@@ -48,10 +48,16 @@ public class MediaService extends MediaSessionService {
             }
 
             @Override
+            public void setRepeatMode(@Player.RepeatMode int repeatMode) {
+                if (MainActivity.instance != null) MainActivity.instance.sendCommand("repeat");
+            }
+
+            @Override
             public boolean isCommandAvailable(@Player.Command int command) {
                 return command == Player.COMMAND_PLAY_PAUSE ||
                        command == Player.COMMAND_SEEK_TO_NEXT ||
                        command == Player.COMMAND_SEEK_TO_PREVIOUS ||
+                       command == Player.COMMAND_SET_REPEAT_MODE ||
                        super.isCommandAvailable(command);
             }
 
@@ -62,6 +68,7 @@ public class MediaService extends MediaSessionService {
                         .add(Player.COMMAND_PLAY_PAUSE)
                         .add(Player.COMMAND_SEEK_TO_NEXT)
                         .add(Player.COMMAND_SEEK_TO_PREVIOUS)
+                        .add(Player.COMMAND_SET_REPEAT_MODE)
                         .build();
             }
         };

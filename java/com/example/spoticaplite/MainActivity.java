@@ -120,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
         s.setAllowFileAccess(true);
         s.setDatabaseEnabled(true);
 
-        // Standard Mobile User-Agent but modified to hide WebView identification (removes "Version/4.0" and "wv")
-        // This is the most compatible way to get the Mobile UI while bypassing "Unsupported Browser" blocks.
+        // Desktop User-Agent to bypass all mobile restrictions (shuffle/skip locks)
+        // Using a modern Windows Chrome UA for maximum compatibility with Spotify's player engine
         s.setUserAgentString(
-            "Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.164 Mobile Safari/537.36"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
         );
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
@@ -234,7 +234,8 @@ public class MainActivity extends AppCompatActivity {
             "    [data-testid=\"now-playing-bar\"], .Root__now-playing-bar, " +
             "    [aria-label=\"Premium\"], a[href*=\"/premium/\"], " +
             "    nav li:has(a[href*=\"premium\"]), nav li:has(a[href*=\"upgrade\"]), " +
-            "    div:has(> a[href*=\"premium\"]) { display: none !important; }';" +
+            "    div:has(> a[href*=\"premium\"]), " +
+            "    .Root__nav-bar, [data-testid=\"side-navigation-bar\"] { display: none !important; }';" +
             "  document.head.appendChild(style);" +
 
             // Optimization: Use state-diffing for high responsiveness with low CPU
@@ -270,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
                     "[data-testid=\"control-button-playpause\"], [data-testid=\"play-pause-button\"], .player-controls__buttons button[aria-label=\"Pause\"], .player-controls__buttons button[aria-label=\"Play\"]";
             case "next" -> "[data-testid=\"control-button-skip-forward\"], [data-testid=\"skip-forward-button\"]";
             case "prev" -> "[data-testid=\"control-button-skip-back\"], [data-testid=\"skip-back-button\"]";
+            case "repeat" -> "[data-testid=\"control-button-repeat\"]";
             default -> "";
         };
         if (!selector.isEmpty()) {
