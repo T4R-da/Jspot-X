@@ -119,11 +119,16 @@ public class MainActivity extends AppCompatActivity {
         s.setAllowContentAccess(true);
         s.setAllowFileAccess(true);
         s.setDatabaseEnabled(true);
+        s.setDomStorageEnabled(true);
 
-        // Motorola-themed High-End UA: Triggers unrestricted playback while keeping the modern UI compatible.
-        // We omit the "Mobile" string to bypass forced shuffle/skip locks.
+        // This UA is carefully crafted to:
+        // 1. Trigger the Tablet/Desktop-like logic (No Shuffle/Previous Lock)
+        // Using a Chromebook User-Agent: 
+        // 1. Seen as a "Laptop/Desktop" by Spotify -> No forced shuffle, Previous button unlocked.
+        // 2. Based on Linux/Chrome -> Maximum compatibility, bypasses "Unsupported Browser" screen.
+        // 3. We use CSS to force the mobile-friendly layout inside the app.
         s.setUserAgentString(
-            "Mozilla/5.0 (Linux; Android 13; Motorola Edge 40 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
         );
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
@@ -155,14 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
-                // Core adblocking while avoiding critical Spotify playback scripts
-                if (url.contains("googleads") || url.contains("doubleclick") || 
-                    url.contains("adservice") || url.contains("vizury") || 
-                    url.contains("quantserve") || url.contains("facebook.net") || 
-                    url.contains("ads-twitter.com")) {
-                    return new WebResourceResponse("text/plain", "utf-8", null);
-                }
+                // Temporary removal of adblocker to test "Unavailable Browser" fix
                 return super.shouldInterceptRequest(view, request);
             }
 
@@ -226,11 +224,17 @@ public class MainActivity extends AppCompatActivity {
             "  if (window.__spoticapInjected) return;" +
             "  window.__spoticapInjected = true;" +
             
-            // Masking the WebView to prevent "Unsupported Browser" errors
+            // Comprehensive browser masking to bypass Spotify's "Unsupported Browser" checks
             "  Object.defineProperty(navigator, 'webdriver', { get: () => undefined });" +
             "  Object.defineProperty(navigator, 'platform', { get: () => 'Linux armv8l' });" +
-            "  if (navigator.languages.length === 0) {" +
+            "  if (!navigator.languages || navigator.languages.length === 0) {" +
             "    Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });" +
+            "  }" +
+            
+            // Masking userAgentData to look like a real mobile browser
+            "  if (navigator.userAgentData) {" +
+            "    Object.defineProperty(navigator.userAgentData, 'mobile', { get: () => true });" +
+            "    Object.defineProperty(navigator.userAgentData, 'platform', { get: () => 'Android' });" +
             "  }" +
 
             "  var style = document.createElement('style');" +
@@ -243,7 +247,8 @@ public class MainActivity extends AppCompatActivity {
             "    div:has(> a[href*=\"premium\"]), " +
             "    [data-testid=\"side-navigation-bar\"] { display: none !important; } " +
             "    [data-testid=\"now-playing-bar\"], .Root__now-playing-bar { display: flex !important; visibility: visible !important; } " +
-            "    [data-testid=\"footer-bar\"], .Root__nav-bar { display: flex !important; visibility: visible !important; }';" +
+            "    [data-testid=\"footer-bar\"], .Root__nav-bar { display: flex !important; visibility: visible !important; } " +
+            "    .Root__main-view { padding-bottom: 90px !important; }';" +
             "  document.head.appendChild(style);" +
 
             // Optimization: Use state-diffing for high responsiveness with low CPU
