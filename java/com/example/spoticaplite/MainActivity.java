@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
             
             // Masking the WebView to prevent "Unsupported Browser" errors
             "  Object.defineProperty(navigator, 'webdriver', { get: () => undefined });" +
+            "  Object.defineProperty(navigator, 'platform', { get: () => 'Linux armv8l' });" +
             "  if (navigator.languages.length === 0) {" +
             "    Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });" +
             "  }" +
@@ -240,9 +241,9 @@ public class MainActivity extends AppCompatActivity {
             "    [aria-label=\"Premium\"], a[href*=\"/premium/\"], " +
             "    nav li:has(a[href*=\"premium\"]), nav li:has(a[href*=\"upgrade\"]), " +
             "    div:has(> a[href*=\"premium\"]), " +
-            "    .Root__nav-bar, [data-testid=\"side-navigation-bar\"] { display: none !important; } " +
+            "    [data-testid=\"side-navigation-bar\"] { display: none !important; } " +
             "    [data-testid=\"now-playing-bar\"], .Root__now-playing-bar { display: flex !important; visibility: visible !important; } " +
-            "    [data-testid=\"footer-bar\"] { display: flex !important; visibility: visible !important; }';" +
+            "    [data-testid=\"footer-bar\"], .Root__nav-bar { display: flex !important; visibility: visible !important; }';" +
             "  document.head.appendChild(style);" +
 
             // Optimization: Use state-diffing for high responsiveness with low CPU
