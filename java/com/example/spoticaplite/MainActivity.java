@@ -120,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
         s.setAllowFileAccess(true);
         s.setDatabaseEnabled(true);
 
-        // High-end Tablet User-Agent: Triggers the "Android Tablet" UI which has bottom navigation 
-        // AND usually allows on-demand playback (no forced shuffle/skip lock).
+        // Motorola-themed High-End UA: Triggers unrestricted playback while keeping the modern UI compatible.
+        // We omit the "Mobile" string to bypass forced shuffle/skip locks.
         s.setUserAgentString(
-            "Mozilla/5.0 (Linux; Android 13; SM-X906B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 13; Motorola Edge 40 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
         );
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
@@ -241,7 +241,8 @@ public class MainActivity extends AppCompatActivity {
             "    nav li:has(a[href*=\"premium\"]), nav li:has(a[href*=\"upgrade\"]), " +
             "    div:has(> a[href*=\"premium\"]), " +
             "    .Root__nav-bar, [data-testid=\"side-navigation-bar\"] { display: none !important; } " +
-            "    [data-testid=\"now-playing-bar\"], .Root__now-playing-bar { display: flex !important; }';" +
+            "    [data-testid=\"now-playing-bar\"], .Root__now-playing-bar { display: flex !important; visibility: visible !important; } " +
+            "    [data-testid=\"footer-bar\"] { display: flex !important; visibility: visible !important; }';" +
             "  document.head.appendChild(style);" +
 
             // Optimization: Use state-diffing for high responsiveness with low CPU
