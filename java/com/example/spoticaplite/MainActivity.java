@@ -116,10 +116,14 @@ public class MainActivity extends AppCompatActivity {
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         s.setJavaScriptCanOpenWindowsAutomatically(true);
+        s.setAllowContentAccess(true);
+        s.setAllowFileAccess(true);
+        s.setDatabaseEnabled(true);
 
-        // Updated User-Agent: Modern Chrome on Android Tablet to bypass shuffle while maintaining compatibility
+        // Standard Mobile User-Agent but modified to hide WebView identification (removes "Version/4.0" and "wv")
+        // This is the most compatible way to get the Mobile UI while bypassing "Unsupported Browser" blocks.
         s.setUserAgentString(
-            "Mozilla/5.0 (Linux; Android 13; Pixel Tablet) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.164 Mobile Safari/537.36"
         );
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
@@ -152,13 +156,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
-                // Aggressive Adblocker & Tracker blocking for maximum speed
+                // Less aggressive adblocking to ensure critical player scripts are not blocked
                 if (url.contains("googleads") || url.contains("doubleclick") || 
-                    url.contains("adservice") || url.contains("analytics") ||
+                    url.contains("adservice") || url.contains("analytics.google") ||
                     url.contains("vizury") || url.contains("quantserve") ||
-                    url.contains("scorecardresearch") || url.contains("facebook.net") ||
-                    url.contains("ads-twitter.com") || url.contains("crashlytics") ||
-                    url.contains("hotjar") || url.contains("inspectlet")) {
+                    url.contains("facebook.net") || url.contains("ads-twitter.com")) {
                     return new WebResourceResponse("text/plain", "utf-8", null);
                 }
                 return super.shouldInterceptRequest(view, request);
