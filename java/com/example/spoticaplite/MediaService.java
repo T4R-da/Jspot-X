@@ -27,6 +27,9 @@ public class MediaService extends MediaSessionService {
         
         basePlayer = new ExoPlayer.Builder(this).build();
         
+        // Ensure the player has a dummy state so Bluetooth devices don't think it's idle
+        basePlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
+        
         // We wrap ExoPlayer to intercept play/pause/skip commands 
         // and route them to Spotify in the WebView.
         ForwardingPlayer bridgePlayer = new ForwardingPlayer(basePlayer) {
