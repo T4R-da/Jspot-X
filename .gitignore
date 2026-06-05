@@ -1,0 +1,39 @@
+# Built objects
+bin/
+gen/
+build/
+.gradle/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+cmake-build-*/
+
+# Local configuration
+local.properties
+.DS_Store
+
+# Signing files
+*.jks
+*.keystore
+*.p12
+spoticap_key
+
+# Gradle executable
+# (Optional: remove these if you want to force users to use their own gradle)
+# !gradlew
+# !gradlew.bat
+# !gradle/wrapper/gradle-wrapper.jar
+# !gradle/wrapper/gradle-wrapper.properties
+
+# Log files
+*.log
+
+# Android Profiler
+*.hprof

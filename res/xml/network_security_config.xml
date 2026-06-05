@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Allow HTTPS connections to Spotify and its CDNs.
+    Cleartext (HTTP) is blocked everywhere.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">spotify.com</domain>
+        <domain includeSubdomains="true">scdn.co</domain>
+    </domain-config>
+</network-security-config>
